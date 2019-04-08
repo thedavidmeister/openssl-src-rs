@@ -69,6 +69,8 @@ impl Build {
         let install_dir = out_dir.join("install");
 
         println!("xxx");
+        println!("x build_dir: {:?}", build_dir);
+        println!("x install_dir: {:?}", install_dir);
         if build_dir.exists() {
             fs::remove_dir_all(&build_dir).unwrap();
         }
