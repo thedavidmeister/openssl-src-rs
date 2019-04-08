@@ -72,10 +72,14 @@ impl Build {
         println!("x build_dir: {:?}", build_dir);
         println!("x install_dir: {:?}", install_dir);
         if build_dir.exists() {
-            fs::remove_dir_all(&build_dir).unwrap();
+            if let Err(e) = fs::remove_dir_all(&build_dir) {
+                println!("remove build err: {:?}", e);
+            }
         }
         if install_dir.exists() {
-            fs::remove_dir_all(&install_dir).unwrap();
+            if let Err(e) = fs::remove_dir_all(&install_dir) {
+                println!("install dir err: {:?}", e);
+            }
         }
 
         println!("yyy");
@@ -347,6 +351,7 @@ Error {}:
 }
 
 fn cp_r(src: &Path, dst: &Path) {
+    println!("cp_r: {:?} to {:?}", &src, &dst);
     for f in fs::read_dir(src).unwrap() {
         let f = f.unwrap();
         let path = f.path();
