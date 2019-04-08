@@ -258,7 +258,7 @@ impl Build {
 
         // And finally, run the perl configure script!
         configure.current_dir(&inner_dir);
-        prinln!("configure debug: {:?}", configure);
+        println!("configure debug: {:?}", configure);
         self.run_command(configure, "configuring OpenSSL build");
 
         // On MSVC we use `nmake.exe` with a slightly different invocation, so
