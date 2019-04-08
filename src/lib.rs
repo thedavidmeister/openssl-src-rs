@@ -258,6 +258,12 @@ impl Build {
 
         // And finally, run the perl configure script!
         configure.current_dir(&inner_dir);
+        println!("target debug: {:?}", target);
+        println!("host debug: {:?}", host);
+        println!("out_dir: {:?}", out_dir);
+        println!("build_dir: {:?}", build_dir);
+        println!("install_dir: {:?}", install_dir);
+        println!("os: {:?}", os);
         println!("configure debug: {:?}", configure);
         self.run_command(configure, "configuring OpenSSL build");
 
