@@ -78,7 +78,9 @@ impl Build {
 
         println!("yyy");
         let inner_dir = build_dir.join("src");
+        println!("inner_dir: {:?}", inner_dir);
         fs::create_dir_all(&inner_dir).unwrap();
+        println!("source_dir: {:?}", source_dir());
         cp_r(&source_dir(), &inner_dir);
 
         println!("zzz");
