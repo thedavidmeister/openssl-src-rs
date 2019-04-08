@@ -354,10 +354,26 @@ Error {}:
     }
 }
 
+fn pd(src: &Path, dst: &Path) {
+    println!("src: {:?}", src);
+    println!("dst: {:?}", dst);
+}
+
 fn cp_r(src: &Path, dst: &Path) -> Result<(), Error> {
-    println!("cp_r: {:?} to {:?}", &src, &dst);
-    for f in fs::read_dir(src)? {
-        let f = f?;
+    for f in match fs::read_dir(src) {
+        Ok(f) => f,
+        Err(e) => {
+            pd(src, dst);
+            Err(e)?
+        }
+    } {
+        let f = match f {
+            Ok(f) => f,
+            Err(e) => {
+                pd(src, dst);
+                Err(e)?
+            }
+        };
         let path = f.path();
         let name = match path.file_name() {
             Some(n) => n,
@@ -369,7 +385,13 @@ fn cp_r(src: &Path, dst: &Path) -> Result<(), Error> {
             cp_r(&path, &dst)?;
         } else {
             let _ = fs::remove_file(&dst);
-            fs::copy(&path, &dst)?;
+            match fs::copy(&path, &dst) {
+                Ok(_) => (),
+                Err(e) => {
+                    pd(src, &dst);
+                    return Err(e);
+                },
+            }
         }
     }
     Ok(())
