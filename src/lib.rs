@@ -68,6 +68,7 @@ impl Build {
         let build_dir = out_dir.join("build");
         let install_dir = out_dir.join("install");
 
+        println!("xxx");
         if build_dir.exists() {
             fs::remove_dir_all(&build_dir).unwrap();
         }
@@ -75,10 +76,12 @@ impl Build {
             fs::remove_dir_all(&install_dir).unwrap();
         }
 
+        println!("yyy");
         let inner_dir = build_dir.join("src");
         fs::create_dir_all(&inner_dir).unwrap();
         cp_r(&source_dir(), &inner_dir);
 
+        println!("zzz");
         let mut configure = Command::new("perl");
         configure.arg("./Configure");
         if target.contains("pc-windows-gnu") {
@@ -86,6 +89,8 @@ impl Build {
         } else {
             configure.arg(&format!("--prefix={}", install_dir.display()));
         }
+
+        println!("aaa");
 
         configure
             // No shared objects, we just want static libraries
@@ -179,6 +184,8 @@ impl Build {
             "wasm32-unknown-unknown" => "gcc",
             _ => panic!("don't know how to configure OpenSSL for {}", target),
         };
+
+        println!("**");
 
         configure.arg(os);
 
