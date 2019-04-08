@@ -60,6 +60,8 @@ impl Build {
     }
 
     pub fn build(&mut self) -> Artifacts {
+        println!("fooo build");
+
         let target = &self.target.as_ref().expect("TARGET dir not set")[..];
         let host = &self.host.as_ref().expect("HOST dir not set")[..];
         let out_dir = self.out_dir.as_ref().expect("OUT_DIR not set");
