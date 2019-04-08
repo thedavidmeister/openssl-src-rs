@@ -4,6 +4,8 @@ use std::env;
 use std::fs;
 use std::path::{PathBuf, Path};
 use std::process::Command;
+use std::io::Error;
+use std::io::ErrorKind;
 
 pub fn source_dir() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("openssl")
@@ -87,7 +89,9 @@ impl Build {
         println!("inner_dir: {:?}", inner_dir);
         fs::create_dir_all(&inner_dir).unwrap();
         println!("source_dir: {:?}", source_dir());
-        cp_r(&source_dir(), &inner_dir);
+        if let Err(e) = cp_r(&source_dir(), &inner_dir) {
+            panic!("cp_r err: {:?}", e);
+        }
 
         println!("zzz");
         let mut configure = Command::new("perl");
@@ -350,21 +354,25 @@ Error {}:
     }
 }
 
-fn cp_r(src: &Path, dst: &Path) {
+fn cp_r(src: &Path, dst: &Path) -> Result<(), Error> {
     println!("cp_r: {:?} to {:?}", &src, &dst);
-    for f in fs::read_dir(src).unwrap() {
-        let f = f.unwrap();
+    for f in fs::read_dir(src)? {
+        let f = f?;
         let path = f.path();
-        let name = path.file_name().unwrap();
+        let name = match path.file_name() {
+            Some(n) => n,
+            None => return Err(Error::new(ErrorKind::Other, format!("no path name: {:?}", path))),
+        };
         let dst = dst.join(name);
-        if f.file_type().unwrap().is_dir() {
-            fs::create_dir_all(&dst).unwrap();
-            cp_r(&path, &dst);
+        if f.file_type()?.is_dir() {
+            fs::create_dir_all(&dst)?;
+            cp_r(&path, &dst)?;
         } else {
             let _ = fs::remove_file(&dst);
-            fs::copy(&path, &dst).unwrap();
+            fs::copy(&path, &dst)?;
         }
     }
+    Ok(())
 }
 
 fn sanitize_sh(path: &Path) -> String {
