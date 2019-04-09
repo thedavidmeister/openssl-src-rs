@@ -6,6 +6,7 @@ use std::path::{PathBuf, Path};
 use std::process::Command;
 use std::io::Error;
 use std::io::ErrorKind;
+use std::ffi::OsStr;
 
 pub fn source_dir() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("openssl")
@@ -396,15 +397,18 @@ fn cp_r(src: &Path, dst: &Path) -> Result<(), Error> {
             fs::create_dir_all(&dst)?;
             cp_r(&path, &dst)?;
         } else {
-            if "idx" != f.path().extension()? {
-                let _ = fs::remove_file(&dst);
-                match fs::copy(&path, &dst) {
-                    Ok(_) => (),
-                    Err(e) => {
-                        println!("!copy!");
-                        pd(&src, &dst);
-                        return Err(e);
-                    },
+            match f.path().extension().and_then(OsStr::to_str) {
+                Some("idx") => (),
+                _ => {
+                    let _ = fs::remove_file(&dst);
+                    match fs::copy(&path, &dst) {
+                        Ok(_) => (),
+                        Err(e) => {
+                            println!("!copy!");
+                            pd(&src, &dst);
+                            return Err(e);
+                        },
+                    }
                 }
             }
         }
