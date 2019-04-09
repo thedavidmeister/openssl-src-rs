@@ -302,6 +302,8 @@ impl Build {
             install.arg("install_sw").current_dir(&inner_dir);
             self.run_command(install, "installing OpenSSL");
         } else {
+            println!("iii");
+            println!("inner_dir: {:?}", &inner_dir);
             let mut depend = self.cmd_make();
             depend.arg("depend").current_dir(&inner_dir);
             self.run_command(depend, "building OpenSSL dependencies");
