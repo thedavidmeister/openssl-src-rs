@@ -394,8 +394,13 @@ fn cp_r(src: &Path, dst: &Path) -> Result<(), Error> {
         };
         let dst = dst.join(name);
         if f.file_type()?.is_dir() {
-            fs::create_dir_all(&dst)?;
-            cp_r(&path, &dst)?;
+            match f.path().file_name().and_then(OsStr::to_str) {
+                Some(".git") => (),
+                _ => {
+                    fs::create_dir_all(&dst)?;
+                    cp_r(&path, &dst)?
+                },
+            }
         } else {
             match f.path().extension().and_then(OsStr::to_str) {
                 Some("idx") => (),
