@@ -355,6 +355,10 @@ Error {}:
 }
 
 fn pd(src: &Path, dst: &Path) {
+    let mut list_dir = Command::new("ls");
+    list_dir.current_dir(&src.to_str().expect("could not get path str"));
+    list_dir.status().expect("could not list");
+
     println!("src: {:?}", src);
     println!("dst: {:?}", dst);
 }
