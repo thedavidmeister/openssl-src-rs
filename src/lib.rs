@@ -395,7 +395,7 @@ fn cp_r(src: &Path, dst: &Path) -> Result<(), Error> {
             cp_r(&path, &dst)?;
         } else {
             let _ = fs::remove_file(&dst);
-            match fs::copy(&path, format!("\\\\?\\{}", dst.to_str().expect("dst str"))) {
+            match fs::copy(fs::canonicalize(&path)?, fs::canonicalize(&dst)?) {
                 Ok(_) => (),
                 Err(e) => {
                     println!("!copy!");
