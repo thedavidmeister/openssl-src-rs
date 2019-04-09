@@ -305,8 +305,11 @@ impl Build {
             println!("iii");
             println!("inner_dir: {:?}", &inner_dir);
             let mut depend = self.cmd_make();
+            println!("...");
             depend.arg("depend").current_dir(&inner_dir);
+            println!("...");
             self.run_command(depend, "building OpenSSL dependencies");
+            println!("...");
 
             let mut build = self.cmd_make();
             build.current_dir(&inner_dir);
