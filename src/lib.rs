@@ -360,7 +360,7 @@ fn pd(src: &Path, dst: &Path) {
     list_src.status().expect("could not list src");
 
     let mut list_dst = Command::new("ls");
-    list_dst.current_dir(&dst.to_str().expect("could not get dst path str"));
+    list_dst.current_dir(&dst.parent().expect("could not get dst path str"));
     list_dst.status().expect("could not list dst");
 
     println!("src: {:?}", src);
