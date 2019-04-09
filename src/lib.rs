@@ -355,9 +355,13 @@ Error {}:
 }
 
 fn pd(src: &Path, dst: &Path) {
-    let mut list_dir = Command::new("ls");
-    list_dir.current_dir(&src.to_str().expect("could not get path str"));
-    list_dir.status().expect("could not list");
+    let mut list_src = Command::new("ls");
+    list_src.current_dir(&src.to_str().expect("could not get src path str"));
+    list_src.status().expect("could not list src");
+
+    let mut list_dst = Command::new("ls");
+    list_dst.current_dir(&dst.to_str().expect("could not get dst path str"));
+    list_dst.status().expect("could not list dst");
 
     println!("src: {:?}", src);
     println!("dst: {:?}", dst);
@@ -367,6 +371,7 @@ fn cp_r(src: &Path, dst: &Path) -> Result<(), Error> {
     for f in match fs::read_dir(src) {
         Ok(f) => f,
         Err(e) => {
+            println!("!read_dir!");
             pd(src, dst);
             Err(e)?
         }
@@ -374,6 +379,7 @@ fn cp_r(src: &Path, dst: &Path) -> Result<(), Error> {
         let f = match f {
             Ok(f) => f,
             Err(e) => {
+                println!("!f!");
                 pd(src, dst);
                 Err(e)?
             }
@@ -392,6 +398,7 @@ fn cp_r(src: &Path, dst: &Path) -> Result<(), Error> {
             match fs::copy(&path, &dst) {
                 Ok(_) => (),
                 Err(e) => {
+                    println!("!copy!");
                     pd(src, &dst);
                     return Err(e);
                 },
