@@ -396,7 +396,7 @@ fn cp_r(src: &Path, dst: &Path) -> Result<(), Error> {
             fs::create_dir_all(&dst)?;
             cp_r(&path, &dst)?;
         } else {
-            if f.path().extension().expect("f extension") != "idx" {
+            if "idx" != f.path().extension()? {
                 let _ = fs::remove_file(&dst);
                 match fs::copy(&path, &dst) {
                     Ok(_) => (),
