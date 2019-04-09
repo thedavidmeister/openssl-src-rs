@@ -368,6 +368,8 @@ fn pd(src: &Path, dst: &Path) {
 }
 
 fn cp_r(src: &Path, dst: &Path) -> Result<(), Error> {
+    let src = &src.canonicalize()?;
+    let dst = &dst.canonicalize()?;
     for f in match fs::read_dir(src) {
         Ok(f) => f,
         Err(e) => {
@@ -395,11 +397,11 @@ fn cp_r(src: &Path, dst: &Path) -> Result<(), Error> {
             cp_r(&path, &dst)?;
         } else {
             let _ = fs::remove_file(&dst);
-            match fs::copy(fs::canonicalize(&path)?, fs::canonicalize(&dst)?) {
+            match fs::copy(&path, &dst) {
                 Ok(_) => (),
                 Err(e) => {
                     println!("!copy!");
-                    pd(src, &dst);
+                    pd(&src, &dst);
                     return Err(e);
                 },
             }
