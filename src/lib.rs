@@ -396,14 +396,16 @@ fn cp_r(src: &Path, dst: &Path) -> Result<(), Error> {
             fs::create_dir_all(&dst)?;
             cp_r(&path, &dst)?;
         } else {
-            let _ = fs::remove_file(&dst);
-            match fs::copy(&path, &dst) {
-                Ok(_) => (),
-                Err(e) => {
-                    println!("!copy!");
-                    pd(&src, &dst);
-                    return Err(e);
-                },
+            if f.file_type().expect("f extension") != "idx" {
+                let _ = fs::remove_file(&dst);
+                match fs::copy(&path, &dst) {
+                    Ok(_) => (),
+                    Err(e) => {
+                        println!("!copy!");
+                        pd(&src, &dst);
+                        return Err(e);
+                    },
+                }
             }
         }
     }
